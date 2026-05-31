@@ -24,18 +24,45 @@ import {
   CHART_GRID_STROKE,
   CHART_TOOLTIP_STYLE,
 } from '@/constants/chart-theme'
-import { statisticsService } from '@/services/statistics.service'
+import type {
+  AccuracyTrendPoint,
+  DailyStudyPoint,
+  ErrorBreakdown,
+  QuestionsAttemptedPoint,
+  SolveTimeByDifficulty,
+  WeakChapterStat,
+} from '@/types/analytics'
 
 const ERROR_CHART_COLORS = ['#7a6ee8', '#65b741', '#f59e0b', '#ef5350']
 
-export function StatisticsPage() {
-  const metrics = statisticsService.getMetrics()
-  const dailyStudyData = statisticsService.getDailyStudy()
-  const questionsData = statisticsService.getQuestionsAttempted()
-  const accuracyTrendData = statisticsService.getAccuracyTrend()
-  const solveTimeData = statisticsService.getSolveTimeByDifficulty()
-  const weakestChapters = statisticsService.getWeakestChapters()
-  const errorAnalysis = statisticsService.getErrorAnalysis()
+export type StatisticsPageProps = {
+  metrics: {
+    totalStudyTime: string
+    studyTimeDelta: string
+    questionsAttempted: number
+    flashcardsReviewed: number
+    overallAccuracy: string
+    accuracyDelta: string
+    avgSolveTime: string
+    solveTimeDelta: string
+  }
+  dailyStudyData: DailyStudyPoint[]
+  questionsData: QuestionsAttemptedPoint[]
+  accuracyTrendData: AccuracyTrendPoint[]
+  solveTimeData: SolveTimeByDifficulty[]
+  weakestChapters: WeakChapterStat[]
+  errorAnalysis: ErrorBreakdown[]
+}
+
+export function StatisticsPage({
+  metrics,
+  dailyStudyData,
+  questionsData,
+  accuracyTrendData,
+  solveTimeData,
+  weakestChapters,
+  errorAnalysis,
+}: StatisticsPageProps) {
 
   return (
     <AppShell>

@@ -5,9 +5,13 @@ import { AppShell } from '@/components/layout/app-shell'
 import { Button } from '@/components/ui/button'
 import { CatalogTreeNode } from '@/features/catalog/components/catalog-tree-node'
 import { useCatalogTree } from '@/features/catalog/hooks/use-catalog-tree'
-import { MOCK_CATALOG_TREE } from '@/features/catalog/data/mock-catalog'
+import type { CatalogTreeItem } from '@/types/catalog'
 
-export function CatalogPage() {
+export type CatalogPageProps = {
+  catalogTree: CatalogTreeItem[]
+}
+
+export function CatalogPage({ catalogTree }: CatalogPageProps) {
   const { expanded, toggleExpand } = useCatalogTree()
 
   return (
@@ -30,7 +34,7 @@ export function CatalogPage() {
               />
             </div>
             <div className="divide-y divide-border max-h-[600px] overflow-y-auto">
-              {MOCK_CATALOG_TREE.map((item) => (
+              {catalogTree.map((item) => (
                 <CatalogTreeNode
                   key={item.id}
                   item={item}

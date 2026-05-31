@@ -3,9 +3,14 @@
 import { AppShell } from '@/components/layout/app-shell'
 import { Button } from '@/components/ui/button'
 import { useFlashcardSession } from '@/features/flashcards/hooks/use-flashcard-session'
-import { MOCK_DUE_CARD_COUNT, MOCK_FLASHCARDS } from '@/features/flashcards/data/mock-flashcards'
+import type { Flashcard } from '@/types/flashcard'
 
-export function FlashcardsPage() {
+export type FlashcardsPageProps = {
+  flashcards: Flashcard[]
+  dueCount: number
+}
+
+export function FlashcardsPage({ flashcards, dueCount }: FlashcardsPageProps) {
   const {
     currentCard,
     currentIndex,
@@ -16,7 +21,7 @@ export function FlashcardsPage() {
     progress,
     handleResponse,
     countByResponse,
-  } = useFlashcardSession(MOCK_FLASHCARDS, MOCK_DUE_CARD_COUNT)
+  } = useFlashcardSession(flashcards, dueCount)
 
   if (!currentCard) return null
 

@@ -4,11 +4,15 @@ import { Play, Pause, SkipForward, CheckCircle, XCircle } from 'lucide-react'
 import { AppShell } from '@/components/layout/app-shell'
 import { Button } from '@/components/ui/button'
 import { QuestionFeedbackModal } from '@/features/practice/components/question-feedback-modal'
-import { MOCK_PRACTICE_QUESTIONS } from '@/features/practice/data/mock-questions'
 import { useActivePractice } from '@/features/practice/hooks/use-active-practice'
 import { formatElapsedTime } from '@/features/practice/utils/format-time'
+import type { PracticeQuestion } from '@/types/question'
 
-export function ActivePracticePage() {
+export type ActivePracticePageProps = {
+  questions: PracticeQuestion[]
+}
+
+export function ActivePracticePage({ questions }: ActivePracticePageProps) {
   const {
     currentQuestion,
     currentIndex,
@@ -21,7 +25,7 @@ export function ActivePracticePage() {
     setSubmission,
     handleSubmission,
     moveToNext,
-  } = useActivePractice(MOCK_PRACTICE_QUESTIONS)
+  } = useActivePractice(questions)
 
   if (!currentQuestion) return null
 

@@ -1,0 +1,128 @@
+// PCM Study Platform — normalized domain schema (SQLite)
+// Note: SQLite via Prisma 5 does not support Json or native enums; use String fields.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Subject {
+  id         String      @id @default(cuid())
+  name       String      @unique
+  slug       String      @unique
+  chartColor String?
+  chapters   Chapter[]
+  flashcards Flashcard[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+}
+
+model Source {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  slug      String     @unique
+  questions Question[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Difficulty {
+  id                 String     @id @default(cuid())
+  name               String     @unique
+  slug               String     @unique
+  sortOrder          Int        @default(0)
+  questions          Question[]
+  displayForChapters Chapter[]  @relation("ChapterDisplayDifficulty")
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+}
+
+model Chapter {
+  id                   String            @id @default(cuid())
+  name                 String
+  slug                 String
+  /// TOPIC | LEVEL (stored as string; SQLite has no enum support in Prisma 5)
+  nodeType             String
+  catalogQuestionCount Int?
+  subjectId            String
+  subject              Subject           @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  parentId             String?
+  parent               Chapter?          @relation("ChapterHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
+  children             Chapter[]         @relation("ChapterHierarchy")
+  displayDifficultyId  String?
+  displayDifficulty    Difficulty?       @relation("ChapterDisplayDifficulty", fields: [displayDifficultyId], references: [id])
+  questionChapters     QuestionChapter[]
+  flashcards           Flashcard[]
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+
+  @@unique([subjectId, slug])
+}
+
+model Concept {
+  id               String            @id @default(cuid())
+  name             String            @unique
+  slug             String            @unique
+  questionConcepts QuestionConcept[]
+  flashcards       Flashcard[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+}
+
+model Question {
+  id             Int               @id @default(autoincrement())
+  content        String
+  questionNumber Int?
+  sourceId       String
+  source         Source            @relation(fields: [sourceId], references: [id])
+  difficultyId   String
+  difficulty     Difficulty        @relation(fields: [difficultyId], references: [id])
+  isDue          Boolean           @default(false)
+  chapters       QuestionChapter[]
+  concepts       QuestionConcept[]
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+}
+
+model QuestionChapter {
+  questionId Int
+  chapterId  String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  chapter    Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  @@id([questionId, chapterId])
+}
+
+model QuestionConcept {
+  questionId Int
+  conceptId  String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  concept    Concept  @relation(fields: [conceptId], references: [id], onDelete: Cascade)
+
+  @@id([questionId, conceptId])
+}
+
+model Flashcard {
+  id           Int       @id @default(autoincrement())
+  front        String
+  back         String
+  subjectId    String
+  subject      Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  chapterId    String?
+  chapter      Chapter?  @relation(fields: [chapterId], references: [id])
+  conceptId    String?
+  concept      Concept?  @relation(fields: [conceptId], references: [id])
+  nextReviewAt DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+/// Seeded UI analytics snapshots (dashboard/statistics charts). JSON stored as string for SQLite.
+model MetricSnapshot {
+  key  String @id
+  data String
+}

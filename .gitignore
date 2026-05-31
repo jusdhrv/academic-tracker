@@ -1,5 +1,12 @@
 # Environment variables
+.env
 .env*.local
+
+# Database
+prisma/dev.db
+prisma/dev.db-journal
+*.db
+*.db-journal
 
 # Common ignores
 node_modules

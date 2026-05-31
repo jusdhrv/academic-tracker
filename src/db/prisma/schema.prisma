@@ -1,9 +1,0 @@
-// Prisma schema placeholder — add models when persistence is enabled.
-// generator client {
-//   provider = "prisma-client-js"
-// }
-//
-// datasource db {
-//   provider = "postgresql"
-//   url      = env("DATABASE_URL")
-// }

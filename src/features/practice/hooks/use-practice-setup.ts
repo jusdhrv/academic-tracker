@@ -1,15 +1,20 @@
 'use client'
 
 import { useState } from 'react'
-import { DIFFICULTIES, QUESTION_SOURCES, SUBJECTS } from '@/constants/practice'
 import { estimateQuestionCount } from '@/lib/scheduling/question-selection'
 import { toggleFilterValue } from '@/features/practice/utils/filters'
 
-export function usePracticeSetup() {
+export type PracticeSetupOptions = {
+  subjects: string[]
+  sources: string[]
+  difficulties: string[]
+}
+
+export function usePracticeSetup({ subjects, sources, difficulties }: PracticeSetupOptions) {
   const [sessionTime, setSessionTime] = useState(30)
   const [timePerQuestion, setTimePerQuestion] = useState(2.5)
-  const [selectedSubjects, setSelectedSubjects] = useState<string[]>(['Physics'])
-  const [selectedSources, setSelectedSources] = useState<string[]>(['JEE Main'])
+  const [selectedSubjects, setSelectedSubjects] = useState<string[]>([subjects[0] ?? 'Physics'])
+  const [selectedSources, setSelectedSources] = useState<string[]>([sources[0] ?? 'JEE Main'])
   const [selectedDifficulties, setSelectedDifficulties] = useState<string[]>(['Medium', 'Hard'])
 
   const estimatedQuestions = estimateQuestionCount(sessionTime, timePerQuestion)
@@ -26,9 +31,9 @@ export function usePracticeSetup() {
     selectedDifficulties,
     setSelectedDifficulties,
     estimatedQuestions,
-    subjects: SUBJECTS,
-    sources: QUESTION_SOURCES,
-    difficulties: DIFFICULTIES,
+    subjects,
+    sources,
+    difficulties,
     toggleFilter: toggleFilterValue,
   }
 }

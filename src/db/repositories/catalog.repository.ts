@@ -1,12 +1,32 @@
+import { prisma } from '@/db/prisma/client'
+import { mapSubjectsToCatalogTree } from '@/db/repositories/mappers/catalog.mapper'
 import type { CatalogTreeItem } from '@/types/catalog'
-import { MOCK_CATALOG_TREE } from '@/features/catalog/data/mock-catalog'
 
-/**
- * Catalog data access. Pages and components must use this layer, not Prisma directly.
- */
 export class CatalogRepository {
   async getTree(): Promise<CatalogTreeItem[]> {
-    return MOCK_CATALOG_TREE
+    const subjects = await prisma.subject.findMany({
+      orderBy: { name: 'asc' },
+      include: {
+        chapters: {
+          where: { nodeType: 'TOPIC', parentId: null },
+          orderBy: { name: 'asc' },
+          include: {
+            displayDifficulty: true,
+            _count: { select: { questionChapters: true } },
+            children: {
+              where: { nodeType: 'LEVEL' },
+              orderBy: { name: 'asc' },
+              include: {
+                displayDifficulty: true,
+                _count: { select: { questionChapters: true } },
+              },
+            },
+          },
+        },
+      },
+    })
+
+    return mapSubjectsToCatalogTree(subjects)
   }
 }
 

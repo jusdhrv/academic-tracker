@@ -1,13 +1,30 @@
+import { prisma } from '@/db/prisma/client'
+import { mapFlashcardToDto } from '@/db/repositories/mappers/flashcard.mapper'
 import type { Flashcard } from '@/types/flashcard'
-import { MOCK_FLASHCARDS } from '@/features/flashcards/data/mock-flashcards'
+
+const flashcardInclude = {
+  subject: true,
+  chapter: true,
+  concept: true,
+} as const
 
 export class FlashcardRepository {
   async getSessionQueue(): Promise<Flashcard[]> {
-    return MOCK_FLASHCARDS
+    const cards = await prisma.flashcard.findMany({
+      orderBy: { id: 'asc' },
+      take: 3,
+      include: flashcardInclude,
+    })
+
+    return cards.map(mapFlashcardToDto)
   }
 
   async getDueCount(): Promise<number> {
-    return 47
+    return prisma.flashcard.count({
+      where: {
+        OR: [{ nextReviewAt: null }, { nextReviewAt: { lte: new Date() } }],
+      },
+    })
   }
 }
 

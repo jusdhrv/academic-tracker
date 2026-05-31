@@ -141,12 +141,19 @@ cd pcm-study-platform
 pnpm install
 ```
 
-3. Run the development server:
+3. Set up the database:
+```bash
+cp .env.example .env
+pnpm db:migrate
+pnpm db:seed
+```
+
+4. Run the development server:
 ```bash
 pnpm dev
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Features in Detail
 

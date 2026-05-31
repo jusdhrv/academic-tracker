@@ -4,9 +4,9 @@ import { Play, Clock } from 'lucide-react'
 import { AppShell } from '@/components/layout/app-shell'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { usePracticeSetup } from '@/features/practice/hooks/use-practice-setup'
+import { usePracticeSetup, type PracticeSetupOptions } from '@/features/practice/hooks/use-practice-setup'
 
-export function PracticeSetupPage() {
+export function PracticeSetupPage(props: PracticeSetupOptions) {
   const {
     sessionTime,
     setSessionTime,
@@ -23,7 +23,7 @@ export function PracticeSetupPage() {
     sources,
     difficulties,
     toggleFilter,
-  } = usePracticeSetup()
+  } = usePracticeSetup(props)
 
   return (
     <AppShell>

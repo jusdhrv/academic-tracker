@@ -23,13 +23,25 @@ import {
   CHART_TOOLTIP_LABEL_STYLE,
   CHART_TOOLTIP_STYLE,
 } from '@/constants/chart-theme'
-import { dashboardService } from '@/services/dashboard.service'
+import type { SubjectDistributionPoint, WeeklyActivityPoint } from '@/types/analytics'
 
-export function DashboardPage() {
-  const metrics = dashboardService.getMetrics()
-  const weeklyData = dashboardService.getWeeklyActivity()
-  const subjectData = dashboardService.getSubjectDistribution()
-  const performanceData = dashboardService.getPerformanceTrend()
+export type DashboardPageProps = {
+  metrics: {
+    questionsDueToday: number
+    questionsDueDelta: string
+    flashcardsDueToday: number
+    flashcardsDueChapters: string
+    studyTimeThisWeek: string
+    studyTimeDelta: string
+    accuracyRate: string
+    accuracyLabel: string
+  }
+  weeklyData: WeeklyActivityPoint[]
+  subjectData: SubjectDistributionPoint[]
+  performanceData: { date: string; accuracy: number }[]
+}
+
+export function DashboardPage({ metrics, weeklyData, subjectData, performanceData }: DashboardPageProps) {
 
   return (
     <AppShell>
