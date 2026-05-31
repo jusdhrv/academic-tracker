@@ -83,26 +83,34 @@ The PCM Study Platform is inspired by Linear, Notion, Anki, and GitHub Insights,
 ## Project Structure
 
 ```
-/app
-  /layout.tsx                 # Root layout with dark theme
-  /page.tsx                   # Dashboard page
-  /cataloging/page.tsx        # Study catalog page
-  /theory-practice/page.tsx   # Flashcard review interface
-  /question-practice/
-    /page.tsx                 # Practice session setup
-    /active/page.tsx          # Active question solving
-  /statistics/page.tsx        # Analytics dashboard
-  /settings/page.tsx          # Settings and preferences
-  /globals.css                # Dark theme CSS variables
-
-/components
-  /sidebar.tsx                # Main navigation sidebar
-  /top-nav.tsx                # Top navigation with streak & due count
-  /ui/*                       # shadcn/ui components
-
-/lib
-  /utils.ts                   # Utility functions (cn for className merging)
+src/
+├── app/                      # Next.js routes (thin page wrappers)
+├── components/
+│   ├── layout/               # AppShell, Sidebar, TopNav
+│   └── ui/                   # Shared shadcn/ui primitives
+├── features/
+│   ├── dashboard/
+│   ├── catalog/
+│   ├── flashcards/           # Theory practice (Anki-style)
+│   ├── practice/             # Question practice setup & active session
+│   ├── statistics/
+│   └── settings/
+├── db/
+│   ├── prisma/               # Prisma client (when persistence is added)
+│   ├── repositories/         # Data access layer
+│   └── schema/               # Shared DB entity types
+├── lib/
+│   ├── analytics/            # Accuracy, study time, weakness detection
+│   ├── scheduling/           # SRS, question selection, mastery
+│   ├── validation/
+│   └── utils.ts
+├── hooks/                    # Shared React hooks
+├── types/                    # Centralized TypeScript types
+├── services/                 # Feature orchestration services
+└── constants/                # Navigation, practice filters, chart theme
 ```
+
+Routes remain at `/`, `/cataloging`, `/theory-practice`, `/question-practice`, `/question-practice/active`, `/statistics`, and `/settings`.
 
 ## Technical Stack
 
