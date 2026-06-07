@@ -27,18 +27,6 @@ export function TopNav() {
             </div>
           </div>
         </div>
-
-        <div className="flex items-center gap-1.5">
-          <Clock className="w-4 h-4 text-primary" />
-          <div>
-            <div className="text-xs text-muted-foreground">Due Today</div>
-            <div className="text-sm font-semibold text-foreground">47</div>
-          </div>
-        </div>
-
-        <button className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center hover:opacity-90 transition-opacity">
-          <User className="w-5 h-5 text-primary-foreground" />
-        </button>
       </div>
     </div>
   )

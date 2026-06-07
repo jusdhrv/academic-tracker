@@ -42,18 +42,6 @@ export function Sidebar() {
           )
         })}
       </nav>
-
-      <div className="px-6 py-4 border-t border-border">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center flex-shrink-0">
-            <span className="text-sm font-bold text-primary-foreground">SK</span>
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-sm font-medium text-foreground truncate">Study King</div>
-            <div className="text-xs text-muted-foreground truncate">Tier 1 Learner</div>
-          </div>
-        </div>
-      </div>
     </aside>
   )
 }
