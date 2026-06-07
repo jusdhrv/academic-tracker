@@ -1,27 +1,65 @@
 'use client'
 
-import { ChevronDown, ChevronRight, Book, Lock } from 'lucide-react'
+import {
+  ChevronDown,
+  ChevronRight,
+  Book,
+  FileText,
+  FolderOpen,
+  Layers,
+  Lightbulb,
+  Lock,
+} from 'lucide-react'
 import type { CatalogTreeItem } from '@/types/catalog'
+import { cn } from '@/lib/utils'
 
 interface CatalogTreeNodeProps {
   item: CatalogTreeItem
   level: number
   expanded: Record<string, boolean>
+  selectedId: string | null
   onToggle: (id: string) => void
+  onSelect: (item: CatalogTreeItem) => void
 }
 
-export function CatalogTreeNode({ item, level, expanded, onToggle }: CatalogTreeNodeProps) {
-  const isExpanded = expanded[item.id]
+const typeIcons = {
+  subject: Book,
+  source: FolderOpen,
+  chapter: Layers,
+  concept: Lightbulb,
+  difficulty: Lock,
+  question: FileText,
+}
+
+export function CatalogTreeNode({
+  item,
+  level,
+  expanded,
+  selectedId,
+  onToggle,
+  onSelect,
+}: CatalogTreeNodeProps) {
+  const isExpanded = expanded[item.id] ?? level < 2
   const hasChildren = item.children && item.children.length > 0
+  const isSelected = selectedId === item.id
+  const Icon = typeIcons[item.type]
 
   return (
     <div>
       <div
-        className={`flex items-center gap-2 px-4 py-2.5 hover:bg-secondary rounded transition-colors ${level === 0 ? 'border-b border-border' : ''}`}
+        className={cn(
+          'flex items-center gap-2 px-4 py-2.5 hover:bg-secondary rounded transition-colors cursor-pointer',
+          level === 0 && 'border-b border-border',
+          isSelected && 'bg-primary/20 border border-primary/30',
+        )}
+        onClick={() => onSelect(item)}
       >
         {hasChildren ? (
           <button
-            onClick={() => onToggle(item.id)}
+            onClick={(e) => {
+              e.stopPropagation()
+              onToggle(item.id)
+            }}
             className="p-0.5 hover:bg-secondary rounded transition-colors"
           >
             {isExpanded ? (
@@ -34,34 +72,34 @@ export function CatalogTreeNode({ item, level, expanded, onToggle }: CatalogTree
           <div className="w-5" />
         )}
 
-        <div className="flex-1 flex items-center gap-2">
-          {item.type === 'subject' && <Book className="w-4 h-4 text-primary" />}
-          {item.type === 'topic' && <div className="w-2 h-2 rounded-full bg-accent" />}
-          {item.type === 'level' && <Lock className="w-3 h-3 text-muted-foreground" />}
-
+        <div className="flex-1 flex items-center gap-2 min-w-0">
+          <Icon className="w-4 h-4 text-primary flex-shrink-0" />
           <span
-            className={`text-sm font-${item.type === 'subject' ? 'semibold' : 'medium'} text-foreground`}
+            className={cn(
+              'text-sm truncate text-foreground',
+              item.type === 'subject' ? 'font-semibold' : 'font-medium',
+            )}
           >
             {item.name}
           </span>
         </div>
 
-        {item.type === 'level' && (
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 text-xs">
-              <span className="text-muted-foreground">{item.questionCount} Q</span>
+        {(item.questionCount !== undefined && item.type !== 'question') && (
+          <div className="flex items-center gap-2 text-xs flex-shrink-0">
+            <span className="text-muted-foreground">{item.questionCount} Q</span>
+            {item.difficulty && (
               <span
-                className={`px-2 py-1 rounded text-xs font-medium ${
-                  item.difficulty === 'Easy'
-                    ? 'bg-green-900/30 text-green-300'
-                    : item.difficulty === 'Medium'
-                      ? 'bg-yellow-900/30 text-yellow-300'
-                      : 'bg-red-900/30 text-red-300'
-                }`}
+                className={cn(
+                  'px-2 py-1 rounded text-xs font-medium',
+                  item.difficulty === 'Easy' && 'bg-green-900/30 text-green-300',
+                  item.difficulty === 'Medium' && 'bg-yellow-900/30 text-yellow-300',
+                  (item.difficulty === 'Hard' || item.difficulty === 'Very Hard') &&
+                    'bg-red-900/30 text-red-300',
+                )}
               >
                 {item.difficulty}
               </span>
-            </div>
+            )}
           </div>
         )}
       </div>
@@ -74,7 +112,9 @@ export function CatalogTreeNode({ item, level, expanded, onToggle }: CatalogTree
               item={child}
               level={level + 1}
               expanded={expanded}
+              selectedId={selectedId}
               onToggle={onToggle}
+              onSelect={onSelect}
             />
           ))}
         </div>

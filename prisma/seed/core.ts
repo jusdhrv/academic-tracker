@@ -1,5 +1,6 @@
 import type { PrismaClient } from '@prisma/client'
 import { CHAPTER_NODE_TYPE } from './constants'
+import { seedCatalogHierarchy } from './catalog-hierarchy'
 
 export async function seedCore(prisma: PrismaClient) {
   await prisma.metricSnapshot.deleteMany()
@@ -45,7 +46,7 @@ export async function seedCore(prisma: PrismaClient) {
 
   const subjectBySlug = Object.fromEntries(subjects.map((s) => [s.slug, s]))
 
-  const concepts = await Promise.all(
+  const legacyConcepts = await Promise.all(
     [
       'Velocity',
       'Acceleration',
@@ -59,12 +60,12 @@ export async function seedCore(prisma: PrismaClient) {
       'Limits',
     ].map((name) =>
       prisma.concept.create({
-        data: { name, slug: name.toLowerCase().replace(/\s+/g, '-') },
+        data: { name, slug: `legacy-${name.toLowerCase().replace(/\s+/g, '-')}` },
       }),
     ),
   )
 
-  const conceptByName = Object.fromEntries(concepts.map((c) => [c.name, c]))
+  const conceptByName = Object.fromEntries(legacyConcepts.map((c) => [c.name, c]))
 
   const physics = subjectBySlug.physics
   const chemistry = subjectBySlug.chemistry
@@ -325,4 +326,6 @@ export async function seedCore(prisma: PrismaClient) {
       },
     })
   }
+
+  await seedCatalogHierarchy(prisma, difficultyByName, sourceByName, subjectBySlug)
 }

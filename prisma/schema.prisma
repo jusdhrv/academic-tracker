@@ -25,6 +25,7 @@ model Source {
   id        String     @id @default(cuid())
   name      String     @unique
   slug      String     @unique
+  chapters  Chapter[]
   questions Question[]
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
@@ -45,14 +46,17 @@ model Chapter {
   id                   String            @id @default(cuid())
   name                 String
   slug                 String
-  /// TOPIC | LEVEL (stored as string; SQLite has no enum support in Prisma 5)
-  nodeType             String
+  /// TOPIC | LEVEL | CHAPTER (stored as string; SQLite has no enum support in Prisma 5)
+  nodeType             String            @default("CHAPTER")
   catalogQuestionCount Int?
   subjectId            String
   subject              Subject           @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  sourceId             String?
+  source               Source?           @relation(fields: [sourceId], references: [id], onDelete: SetNull)
   parentId             String?
   parent               Chapter?          @relation("ChapterHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
   children             Chapter[]         @relation("ChapterHierarchy")
+  concepts             Concept[]
   displayDifficultyId  String?
   displayDifficulty    Difficulty?       @relation("ChapterDisplayDifficulty", fields: [displayDifficultyId], references: [id])
   questionChapters     QuestionChapter[]
@@ -65,12 +69,16 @@ model Chapter {
 
 model Concept {
   id               String            @id @default(cuid())
-  name             String            @unique
-  slug             String            @unique
+  name             String
+  slug             String
+  chapterId        String?
+  chapter          Chapter?          @relation(fields: [chapterId], references: [id], onDelete: Cascade)
   questionConcepts QuestionConcept[]
   flashcards       Flashcard[]
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
+
+  @@unique([chapterId, slug])
 }
 
 model Question {
