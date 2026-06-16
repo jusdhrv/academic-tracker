@@ -82,18 +82,29 @@ model Concept {
 }
 
 model Question {
-  id             Int               @id @default(autoincrement())
-  content        String
-  questionNumber Int?
-  sourceId       String
-  source         Source            @relation(fields: [sourceId], references: [id])
-  difficultyId   String
-  difficulty     Difficulty        @relation(fields: [difficultyId], references: [id])
-  isDue          Boolean           @default(false)
-  chapters       QuestionChapter[]
-  concepts       QuestionConcept[]
-  createdAt      DateTime          @default(now())
-  updatedAt      DateTime          @updatedAt
+  id                      Int                       @id @default(autoincrement())
+  content                 String
+  questionNumber          Int?
+  sourceId                String
+  source                  Source                    @relation(fields: [sourceId], references: [id])
+  difficultyId            String
+  difficulty              Difficulty                @relation(fields: [difficultyId], references: [id])
+  isDue                   Boolean                   @default(false)
+  chapters                QuestionChapter[]
+  concepts                QuestionConcept[]
+  // Mastery tracking for spaced repetition
+  masteryScore            Float                     @default(0.5)
+  lastSeen                DateTime?
+  totalAttempts           Int                       @default(0)
+  fastSuccesses           Int                       @default(0)
+  slowSuccesses           Int                       @default(0)
+  failures                Int                       @default(0)
+  skips                   Int                       @default(0)
+  consecutiveFastSuccesses Int                      @default(0)
+  // Relations
+  practiceAttempts        PracticeQuestionAttempt[]
+  createdAt               DateTime                  @default(now())
+  updatedAt               DateTime                  @updatedAt
 }
 
 model QuestionChapter {
@@ -133,4 +144,34 @@ model Flashcard {
 model MetricSnapshot {
   key  String @id
   data String
+}
+
+model PracticeSession {
+  id                      String                    @id @default(cuid())
+  sessionDuration         Int                       // total session duration in seconds
+  targetTimePerQuestion   Float                     // target time per question in minutes
+  selectedQuestions       String                    // JSON array of question IDs for this session
+  filterCriteria          String                    // JSON object with subjectIds, sourceIds, chapterIds, difficultyIds
+  startedAt               DateTime
+  endedAt                 DateTime?
+  practiceAttempts        PracticeQuestionAttempt[]
+  createdAt               DateTime                  @default(now())
+  updatedAt               DateTime                  @updatedAt
+}
+
+model PracticeQuestionAttempt {
+  id                String            @id @default(cuid())
+  sessionId         String
+  session           PracticeSession   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  questionId        Int
+  question          Question          @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  outcome           String            // 'solved-fast' | 'solved-slow' | 'failed' | 'skipped'
+  startedAt         DateTime
+  endedAt           DateTime
+  elapsedSeconds    Int               // total elapsed time for this question
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  @@index([sessionId])
+  @@index([questionId])
 }

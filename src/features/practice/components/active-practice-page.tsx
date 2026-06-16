@@ -10,9 +10,10 @@ import type { PracticeQuestion } from '@/types/question'
 
 export type ActivePracticePageProps = {
   questions: PracticeQuestion[]
+  sessionId?: string
 }
 
-export function ActivePracticePage({ questions }: ActivePracticePageProps) {
+export function ActivePracticePage({ questions, sessionId }: ActivePracticePageProps) {
   const {
     currentQuestion,
     currentIndex,
@@ -25,7 +26,8 @@ export function ActivePracticePage({ questions }: ActivePracticePageProps) {
     setSubmission,
     handleSubmission,
     moveToNext,
-  } = useActivePractice(questions)
+    isRecordingAttempt,
+  } = useActivePractice(questions, sessionId)
 
   if (!currentQuestion) return null
 

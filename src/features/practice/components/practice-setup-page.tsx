@@ -1,12 +1,15 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import { Play, Clock } from 'lucide-react'
 import { AppShell } from '@/components/layout/app-shell'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { usePracticeSetup, type PracticeSetupOptions } from '@/features/practice/hooks/use-practice-setup'
+import { toast } from 'sonner'
 
 export function PracticeSetupPage(props: PracticeSetupOptions) {
+  const router = useRouter()
   const {
     sessionTime,
     setSessionTime,
@@ -23,7 +26,19 @@ export function PracticeSetupPage(props: PracticeSetupOptions) {
     sources,
     difficulties,
     toggleFilter,
+    isLoading,
+    error,
+    startSession,
   } = usePracticeSetup(props)
+
+  const handleStartSession = async () => {
+    const session = await startSession()
+    if (session?.id) {
+      router.push(`/question-practice/active?sessionId=${session.id}`)
+    } else {
+      toast.error(error || 'Failed to start session')
+    }
+  }
 
   return (
     <AppShell>
@@ -172,13 +187,17 @@ export function PracticeSetupPage(props: PracticeSetupOptions) {
                 </div>
               </div>
 
-              <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground flex items-center justify-center gap-2 h-12">
+              <Button
+                onClick={handleStartSession}
+                disabled={isLoading}
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground flex items-center justify-center gap-2 h-12 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
                 <Play className="w-4 h-4" />
-                Start Practice Session
+                {isLoading ? 'Starting...' : 'Start Practice Session'}
               </Button>
 
               <p className="text-xs text-muted-foreground text-center mt-4">
-                Questions will be selected randomly matching your filters
+                Questions will be selected using intelligent algorithms matching your filters
               </p>
             </div>
           </div>
