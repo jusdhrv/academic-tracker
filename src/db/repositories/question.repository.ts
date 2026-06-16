@@ -41,34 +41,34 @@ export class QuestionRepository {
       where: {
         chapters: filters.chapterIds
           ? {
+            some: {
+              chapterId: {
+                in: filters.chapterIds,
+              },
+            },
+          }
+          : filters.sourceId
+            ? {
               some: {
-                chapterId: {
-                  in: filters.chapterIds,
+                chapter: {
+                  sourceId: filters.sourceId,
                 },
               },
             }
-          : filters.sourceId
-            ? {
-                some: {
-                  chapter: {
-                    sourceId: filters.sourceId,
-                  },
-                },
-              }
             : undefined,
         source: filters.sourceIds
           ? {
-              id: {
-                in: filters.sourceIds,
-              },
-            }
+            id: {
+              in: filters.sourceIds,
+            },
+          }
           : undefined,
         difficulty: filters.difficultyIds
           ? {
-              id: {
-                in: filters.difficultyIds,
-              },
-            }
+            id: {
+              in: filters.difficultyIds,
+            },
+          }
           : undefined,
       },
       include: questionInclude,

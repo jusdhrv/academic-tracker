@@ -82,7 +82,7 @@ export function useActivePractice(
 
   const handleSubmission = async (type: QuestionOutcome) => {
     setSubmitted(true)
-    
+
     // Record the attempt
     await recordAttempt(type)
 

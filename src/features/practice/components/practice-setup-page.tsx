@@ -93,11 +93,10 @@ export function PracticeSetupPage(props: PracticeSetupOptions) {
                   <button
                     key={subject}
                     onClick={() => setSelectedSubjects(toggleFilter(subject, selectedSubjects))}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      selectedSubjects.includes(subject)
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedSubjects.includes(subject)
                         ? 'bg-primary text-primary-foreground'
                         : 'bg-secondary text-muted-foreground hover:text-foreground'
-                    }`}
+                      }`}
                   >
                     {subject}
                   </button>
@@ -112,11 +111,10 @@ export function PracticeSetupPage(props: PracticeSetupOptions) {
                   <button
                     key={source}
                     onClick={() => setSelectedSources(toggleFilter(source, selectedSources))}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      selectedSources.includes(source)
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedSources.includes(source)
                         ? 'bg-primary text-primary-foreground'
                         : 'bg-secondary text-muted-foreground hover:text-foreground'
-                    }`}
+                      }`}
                   >
                     {source}
                   </button>
@@ -131,11 +129,10 @@ export function PracticeSetupPage(props: PracticeSetupOptions) {
                   <button
                     key={difficulty}
                     onClick={() => setSelectedDifficulties(toggleFilter(difficulty, selectedDifficulties))}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      selectedDifficulties.includes(difficulty)
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${selectedDifficulties.includes(difficulty)
                         ? 'bg-primary text-primary-foreground'
                         : 'bg-secondary text-muted-foreground hover:text-foreground'
-                    }`}
+                      }`}
                   >
                     {difficulty}
                   </button>
