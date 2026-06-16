@@ -26,10 +26,12 @@ import {
 } from '@/constants/chart-theme'
 import type {
   AccuracyTrendPoint,
+  ChapterOption,
   DailyStudyPoint,
   ErrorBreakdown,
   QuestionsAttemptedPoint,
   SolveTimeByDifficulty,
+  SubjectOption,
   WeakChapterStat,
 } from '@/types/analytics'
 
@@ -46,6 +48,12 @@ export type StatisticsPageProps = {
     avgSolveTime: string
     solveTimeDelta: string
   }
+  startDate?: string
+  endDate?: string
+  selectedSubjectId?: string
+  selectedChapterId?: string
+  subjectOptions: SubjectOption[]
+  chapterOptions: ChapterOption[]
   dailyStudyData: DailyStudyPoint[]
   questionsData: QuestionsAttemptedPoint[]
   accuracyTrendData: AccuracyTrendPoint[]
@@ -56,6 +64,12 @@ export type StatisticsPageProps = {
 
 export function StatisticsPage({
   metrics,
+  startDate,
+  endDate,
+  selectedSubjectId,
+  selectedChapterId,
+  subjectOptions,
+  chapterOptions,
   dailyStudyData,
   questionsData,
   accuracyTrendData,
@@ -67,17 +81,57 @@ export function StatisticsPage({
   return (
     <AppShell>
       <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-foreground">Statistics & Analytics</h1>
             <p className="text-muted-foreground mt-1">Comprehensive analysis of your study performance.</p>
           </div>
-          <div className="flex items-center gap-2">
+          <form className="flex flex-wrap items-center gap-2" method="get">
             <Calendar className="w-4 h-4 text-muted-foreground" />
-            <Input type="date" className="bg-card border-border text-foreground text-sm w-32" />
+            <Input
+              name="startDate"
+              type="date"
+              defaultValue={startDate ?? ''}
+              className="bg-card border-border text-foreground text-sm w-32"
+            />
             <span className="text-muted-foreground">to</span>
-            <Input type="date" className="bg-card border-border text-foreground text-sm w-32" />
-          </div>
+            <Input
+              name="endDate"
+              type="date"
+              defaultValue={endDate ?? ''}
+              className="bg-card border-border text-foreground text-sm w-32"
+            />
+            <select
+              name="subjectId"
+              defaultValue={selectedSubjectId ?? ''}
+              className="bg-card border border-border text-foreground text-sm rounded-lg px-3 py-2"
+            >
+              <option value="">All subjects</option>
+              {subjectOptions.map((subject) => (
+                <option key={subject.id} value={subject.id}>
+                  {subject.name}
+                </option>
+              ))}
+            </select>
+            <select
+              name="chapterId"
+              defaultValue={selectedChapterId ?? ''}
+              className="bg-card border border-border text-foreground text-sm rounded-lg px-3 py-2"
+            >
+              <option value="">All chapters</option>
+              {chapterOptions.map((chapter) => (
+                <option key={chapter.id} value={chapter.id}>
+                  {chapter.name}
+                </option>
+              ))}
+            </select>
+            <button
+              type="submit"
+              className="rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition hover:bg-primary/90"
+            >
+              Apply
+            </button>
+          </form>
         </div>
 
         <div className="grid grid-cols-5 gap-4 mb-8">

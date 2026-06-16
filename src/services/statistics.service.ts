@@ -1,11 +1,8 @@
+import type { AnalyticsFilters } from '@/types/analytics'
 import { statisticsRepository } from '@/db/repositories/statistics.repository'
 
 export const statisticsService = {
-  getMetrics: () => statisticsRepository.getMetrics(),
-  getDailyStudy: () => statisticsRepository.getDailyStudy(),
-  getQuestionsAttempted: () => statisticsRepository.getQuestionsAttempted(),
-  getAccuracyTrend: () => statisticsRepository.getAccuracyTrend(),
-  getSolveTimeByDifficulty: () => statisticsRepository.getSolveTimeByDifficulty(),
-  getWeakestChapters: () => statisticsRepository.getWeakestChapters(),
-  getErrorAnalysis: () => statisticsRepository.getErrorAnalysis(),
+  getAnalyticsData: (filters?: AnalyticsFilters) => statisticsRepository.getAnalyticsData(filters),
+  getSubjectOptions: () => statisticsRepository.getSubjectOptions(),
+  getChapterOptions: (subjectId?: string) => statisticsRepository.getChapterOptions(subjectId),
 }

@@ -30,6 +30,37 @@ export interface ErrorBreakdown {
   percentage: number
 }
 
+export interface SubjectOption {
+  id: string
+  name: string
+}
+
+export interface ChapterOption {
+  id: string
+  name: string
+  subjectId: string
+}
+
+export interface AnalyticsFilters {
+  startDate?: string
+  endDate?: string
+  subjectId?: string
+  chapterId?: string
+}
+
+export interface StatisticsMetrics {
+  totalStudyTime: string
+  studyTimeDelta: string
+  questionsAttempted: number
+  reviewQueueSize: number
+  overdueReviews: number
+  overallAccuracy: string
+  accuracyDelta: string
+  avgSolveTime: string
+  solveTimeDelta: string
+  masteryGrowth: string
+}
+
 export interface WeeklyActivityPoint {
   day: string
   questions: number
