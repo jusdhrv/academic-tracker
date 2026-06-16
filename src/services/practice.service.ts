@@ -42,6 +42,10 @@ export const practiceService = {
     questionId: number
     outcome: 'solved-fast' | 'solved-slow' | 'failed' | 'skipped'
     elapsedSeconds: number
+    confidence: number
+    errorType: string
+    questionType: string
+    tags: string[]
   }) => {
     return fetch('/api/practice/attempts', {
       method: 'POST',

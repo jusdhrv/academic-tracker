@@ -65,12 +65,20 @@ export class PracticeRepository {
         startedAt: Date
         endedAt: Date
         elapsedSeconds: number
+        confidence: number
+        errorType: string
+        questionType: string
+        tags: string[]
     }) {
         return prisma.practiceQuestionAttempt.create({
             data: {
                 sessionId: data.sessionId,
                 questionId: data.questionId,
                 outcome: data.outcome,
+                confidence: data.confidence,
+                errorType: data.errorType,
+                questionType: data.questionType,
+                tags: JSON.stringify(data.tags || []),
                 startedAt: data.startedAt,
                 endedAt: data.endedAt,
                 elapsedSeconds: data.elapsedSeconds,
@@ -82,7 +90,7 @@ export class PracticeRepository {
      * Get all attempts for a session.
      */
     async getSessionAttempts(sessionId: string) {
-        return prisma.practiceQuestionAttempt.findMany({
+        const attempts = await prisma.practiceQuestionAttempt.findMany({
             where: { sessionId },
             orderBy: { createdAt: 'asc' },
             include: {
@@ -94,6 +102,11 @@ export class PracticeRepository {
                 },
             },
         })
+
+        return attempts.map((attempt) => ({
+            ...attempt,
+            tags: attempt.tags ? JSON.parse(attempt.tags) as string[] : [],
+        }))
     }
 
     /**
@@ -115,27 +128,23 @@ export class PracticeRepository {
             totalAttempts: question.totalAttempts + 1,
         }
 
-        // Update outcome-specific stats
+        // Update outcome-specific stats using deliberate practice mastery weights
         if (outcome === 'solved-fast') {
             updates.fastSuccesses = question.fastSuccesses + 1
             updates.consecutiveFastSuccesses = question.consecutiveFastSuccesses + 1
-            // Increase mastery for successful fast solves
-            updates.masteryScore = Math.min(1, question.masteryScore + 0.15)
+            updates.masteryScore = Math.min(1, question.masteryScore + 0.2)
         } else if (outcome === 'solved-slow') {
             updates.slowSuccesses = question.slowSuccesses + 1
             updates.consecutiveFastSuccesses = 0
-            // Increase mastery for successful slow solves (less gain than fast)
-            updates.masteryScore = Math.min(1, question.masteryScore + 0.08)
+            updates.masteryScore = Math.min(1, question.masteryScore + 0.1)
         } else if (outcome === 'failed') {
             updates.failures = question.failures + 1
             updates.consecutiveFastSuccesses = 0
-            // Decrease mastery for failures
-            updates.masteryScore = Math.max(0, question.masteryScore - 0.1)
+            updates.masteryScore = Math.max(0, question.masteryScore - 0.3)
         } else if (outcome === 'skipped') {
             updates.skips = question.skips + 1
             updates.consecutiveFastSuccesses = 0
-            // Slight mastery decrease for skips
-            updates.masteryScore = Math.max(0, question.masteryScore - 0.05)
+            updates.masteryScore = Math.max(0, question.masteryScore - 0.2)
         }
 
         return prisma.question.update({

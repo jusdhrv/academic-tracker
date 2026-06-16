@@ -166,6 +166,10 @@ model PracticeQuestionAttempt {
   questionId        Int
   question          Question          @relation(fields: [questionId], references: [id], onDelete: Cascade)
   outcome           String            // 'solved-fast' | 'solved-slow' | 'failed' | 'skipped'
+  confidence        Int               @default(3)
+  errorType         String            @default("calculation")
+  questionType      String            @default("numerical")
+  tags              String            @default("[]")
   startedAt         DateTime
   endedAt           DateTime
   elapsedSeconds    Int               // total elapsed time for this question

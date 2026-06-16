@@ -9,6 +9,7 @@ const INITIAL_SUBMISSION: QuestionSubmissionFeedback = {
   confidence: 3,
   errorType: 'calculation',
   questionType: 'numerical',
+  tags: [],
 }
 
 export function useActivePractice(
@@ -20,6 +21,7 @@ export function useActivePractice(
   const [isRunning, setIsRunning] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [submission, setSubmission] = useState<QuestionSubmissionFeedback>(INITIAL_SUBMISSION)
+  const [pendingOutcome, setPendingOutcome] = useState<QuestionOutcome | null>(null)
   const [questionStartTime, setQuestionStartTime] = useState<Date | null>(null)
   const [isRecordingAttempt, setIsRecordingAttempt] = useState(false)
 
@@ -42,8 +44,8 @@ export function useActivePractice(
     }
   }, [isRunning, questionStartTime])
 
-  const recordAttempt = async (outcome: QuestionOutcome) => {
-    if (!sessionId || !currentQuestion || !questionStartTime) {
+  const saveAttempt = async (outcome: QuestionOutcome) => {
+    if (!sessionId || !currentQuestion) {
       console.warn('Missing data to record attempt')
       return
     }
@@ -55,6 +57,10 @@ export function useActivePractice(
         questionId: currentQuestion.id,
         outcome,
         elapsedSeconds: time,
+        confidence: submission.confidence,
+        errorType: submission.errorType,
+        questionType: submission.questionType,
+        tags: submission.tags,
       })
     } catch (error) {
       console.error('Failed to record attempt:', error)
@@ -64,33 +70,33 @@ export function useActivePractice(
   }
 
   const moveToNext = async () => {
-    // Record the attempt before moving to next
-    if (submitted && currentQuestion) {
-      const outcome = submission.isOpen ? 'solved-fast' : 'skipped' // placeholder
-      await recordAttempt(outcome as QuestionOutcome)
+    if (pendingOutcome && currentQuestion) {
+      await saveAttempt(pendingOutcome)
+      setPendingOutcome(null)
     }
 
     if (currentIndex < totalQuestions - 1) {
-      setCurrentIndex(currentIndex + 1)
+      setCurrentIndex((index) => index + 1)
       setTime(0)
       setIsRunning(false)
       setSubmitted(false)
       setQuestionStartTime(null)
-      setSubmission((prev) => ({ ...prev, isOpen: false }))
+      setSubmission(INITIAL_SUBMISSION)
     }
   }
 
   const handleSubmission = async (type: QuestionOutcome) => {
     setSubmitted(true)
-
-    // Record the attempt
-    await recordAttempt(type)
+    setPendingOutcome(type)
 
     if (type === 'skipped') {
-      // Move to next without showing feedback
-      setTimeout(() => moveToNext(), 500)
+      await saveAttempt(type)
+      setPendingOutcome(null)
+      setTimeout(() => {
+        setSubmission(INITIAL_SUBMISSION)
+        moveToNext()
+      }, 300)
     } else {
-      // Show feedback modal
       setSubmission((prev) => ({ ...prev, isOpen: true }))
     }
   }

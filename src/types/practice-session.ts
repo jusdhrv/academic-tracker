@@ -1,4 +1,4 @@
-export type QuestionOutcome = 'solved-fast' | 'solved-slow' | 'failed' | 'skipped'
+import type { QuestionOutcome, QuestionErrorType, QuestionType } from '@/types/question'
 
 export interface PracticeSessionFilters {
     subjectIds?: string[]
@@ -28,6 +28,10 @@ export interface PracticeQuestionAttemptRequest {
     questionId: number
     outcome: QuestionOutcome
     elapsedSeconds: number
+    confidence: number
+    errorType: QuestionErrorType
+    questionType: QuestionType
+    tags: string[]
 }
 
 export interface PracticeQuestionAttemptResponse {
@@ -36,6 +40,10 @@ export interface PracticeQuestionAttemptResponse {
     questionId: number
     outcome: QuestionOutcome
     elapsedSeconds: number
+    confidence: number
+    errorType: QuestionErrorType
+    questionType: QuestionType
+    tags: string[]
     createdAt: Date
 }
 

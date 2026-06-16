@@ -7,24 +7,35 @@ export async function POST(request: Request) {
         const body = (await request.json()) as PracticeQuestionAttemptRequest
 
         // Validate request
-        if (!body.sessionId || !body.questionId || !body.outcome || body.elapsedSeconds === undefined) {
+        if (
+            !body.sessionId ||
+            !body.questionId ||
+            !body.outcome ||
+            body.elapsedSeconds === undefined ||
+            body.confidence === undefined ||
+            !body.errorType ||
+            !body.questionType ||
+            !Array.isArray(body.tags)
+        ) {
             return NextResponse.json(
                 { error: 'Missing required fields' },
                 { status: 400 },
             )
         }
 
-        // Record the attempt
         const attempt = await practiceRepository.recordAttempt({
             sessionId: body.sessionId,
             questionId: body.questionId,
             outcome: body.outcome,
+            confidence: body.confidence,
+            errorType: body.errorType,
+            questionType: body.questionType,
+            tags: body.tags,
             startedAt: new Date(),
             endedAt: new Date(),
             elapsedSeconds: body.elapsedSeconds,
         })
 
-        // Update question mastery stats
         await practiceRepository.updateQuestionStats(
             body.questionId,
             body.outcome,
@@ -37,6 +48,10 @@ export async function POST(request: Request) {
             questionId: attempt.questionId,
             outcome: attempt.outcome,
             elapsedSeconds: attempt.elapsedSeconds,
+            confidence: attempt.confidence,
+            errorType: attempt.errorType,
+            questionType: attempt.questionType,
+            tags: attempt.tags ? JSON.parse(attempt.tags) : [],
             createdAt: attempt.createdAt,
         })
     } catch (error) {
