@@ -49,12 +49,8 @@ export function DashboardPage({ metrics, weeklyData, subjectData, performanceDat
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
-            <p className="text-muted-foreground mt-1">Welcome back! Here&apos;s your study overview.</p>
+            <p className="text-muted-foreground mt-1">Welcome back! Here&apos;s an overview of your studies.</p>
           </div>
-          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground flex items-center gap-2">
-            <Play className="w-4 h-4" />
-            Start Study Session
-          </Button>
         </div>
 
         <div className="grid grid-cols-4 gap-6 mb-8">

@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Zap } from 'lucide-react'
+import { BookMarked } from 'lucide-react'
 import { MAIN_NAVIGATION } from '@/constants/navigation'
 import { cn } from '@/lib/utils'
 
@@ -13,10 +13,10 @@ export function Sidebar() {
     <aside className="fixed left-0 top-0 h-screen w-64 border-r border-border bg-card flex flex-col">
       <div className="flex items-center gap-3 px-6 py-6 border-b border-border">
         <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
-          <Zap className="w-6 h-6 text-primary-foreground" />
+          <BookMarked className="w-6 h-6 text-primary-foreground" />
         </div>
         <div>
-          <div className="font-bold text-base text-foreground">PCM</div>
+          <div className="font-bold text-base text-foreground">IIT-JEE</div>
           <div className="text-xs text-muted-foreground">Study Platform</div>
         </div>
       </div>
