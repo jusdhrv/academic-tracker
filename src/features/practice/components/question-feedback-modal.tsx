@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import type { QuestionSubmissionFeedback } from '@/types/question'
+import type { QuestionErrorType, QuestionSubmissionFeedback, QuestionType } from '@/types/question'
 
 interface QuestionFeedbackModalProps {
   submission: QuestionSubmissionFeedback
@@ -51,8 +51,8 @@ export function QuestionFeedbackModal({
                 key={rating}
                 onClick={() => onUpdate({ confidence: rating })}
                 className={`py-2 px-3 rounded text-sm font-medium transition-colors ${submission.confidence === rating
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-secondary text-muted-foreground hover:text-foreground'
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-secondary text-muted-foreground hover:text-foreground'
                   }`}
               >
                 {rating}
@@ -66,7 +66,7 @@ export function QuestionFeedbackModal({
           <label className="text-sm font-semibold text-foreground mb-3 block">Error Type</label>
           <select
             value={submission.errorType}
-            onChange={(e) => onUpdate({ errorType: e.target.value })}
+            onChange={(e) => onUpdate({ errorType: e.target.value as QuestionErrorType })}
             className="w-full px-3 py-2 bg-secondary border border-border rounded text-sm text-foreground"
           >
             <option value="calculation">Calculation Error</option>
@@ -80,7 +80,7 @@ export function QuestionFeedbackModal({
           <label className="text-sm font-semibold text-foreground mb-3 block">Question Type</label>
           <select
             value={submission.questionType}
-            onChange={(e) => onUpdate({ questionType: e.target.value })}
+            onChange={(e) => onUpdate({ questionType: e.target.value as QuestionType })}
             className="w-full px-3 py-2 bg-secondary border border-border rounded text-sm text-foreground"
           >
             <option value="numerical">Numerical</option>

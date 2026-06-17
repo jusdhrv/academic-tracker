@@ -3,64 +3,71 @@ import type { CatalogTreeItem } from '@/types/catalog'
 export const MOCK_CATALOG_TREE: CatalogTreeItem[] = [
   {
     id: 'physics',
+    entityId: 'physics',
     name: 'Physics',
     type: 'subject',
     expanded: true,
     children: [
       {
         id: 'mechanics',
+        entityId: 'mechanics',
         name: 'Mechanics & Motion',
         type: 'topic',
         expanded: true,
         children: [
-          { id: 'mech-l1', name: 'Level 1', type: 'level', questionCount: 35, difficulty: 'Easy' },
-          { id: 'mech-l2', name: 'Level 2', type: 'level', questionCount: 48, difficulty: 'Medium' },
-          { id: 'mech-l3', name: 'Level 3', type: 'level', questionCount: 20, difficulty: 'Hard' },
+          { id: 'mech-l1', entityId: 'mech-l1', name: 'Level 1', type: 'level', questionCount: 35, difficulty: 'Easy' },
+          { id: 'mech-l2', entityId: 'mech-l2', name: 'Level 2', type: 'level', questionCount: 48, difficulty: 'Medium' },
+          { id: 'mech-l3', entityId: 'mech-l3', name: 'Level 3', type: 'level', questionCount: 20, difficulty: 'Hard' },
         ],
       },
       {
         id: 'thermodynamics',
+        entityId: 'thermodynamics',
         name: 'Thermodynamics',
         type: 'topic',
         children: [
-          { id: 'thermo-l1', name: 'Level 1', type: 'level', questionCount: 28, difficulty: 'Easy' },
-          { id: 'thermo-l2', name: 'Level 2', type: 'level', questionCount: 42, difficulty: 'Medium' },
+          { id: 'thermo-l1', entityId: 'thermo-l1', name: 'Level 1', type: 'level', questionCount: 28, difficulty: 'Easy' },
+          { id: 'thermo-l2', entityId: 'thermo-l2', name: 'Level 2', type: 'level', questionCount: 42, difficulty: 'Medium' },
         ],
       },
     ],
   },
   {
     id: 'chemistry',
+    entityId: 'chemistry',
     name: 'Chemistry',
     type: 'subject',
     expanded: true,
     children: [
       {
         id: 'inorganic',
+        entityId: 'inorganic',
         name: 'Inorganic Chemistry',
         type: 'topic',
         expanded: true,
         children: [
-          { id: 'inorg-mole', name: 'Mole Concept', type: 'level', questionCount: 52, difficulty: 'Medium' },
-          { id: 'inorg-reactions', name: 'Chemical Reactions', type: 'level', questionCount: 38, difficulty: 'Hard' },
+          { id: 'inorg-mole', entityId: 'inorg-mole', name: 'Mole Concept', type: 'level', questionCount: 52, difficulty: 'Medium' },
+          { id: 'inorg-reactions', entityId: 'inorg-reactions', name: 'Chemical Reactions', type: 'level', questionCount: 38, difficulty: 'Hard' },
         ],
       },
     ],
   },
   {
     id: 'mathematics',
+    entityId: 'mathematics',
     name: 'Mathematics',
     type: 'subject',
     expanded: true,
     children: [
       {
         id: 'calculus',
+        entityId: 'calculus',
         name: 'Calculus',
         type: 'topic',
         expanded: true,
         children: [
-          { id: 'calc-limits', name: 'Limits & Derivatives', type: 'level', questionCount: 64, difficulty: 'Hard' },
-          { id: 'calc-integration', name: 'Integration', type: 'level', questionCount: 45, difficulty: 'Hard' },
+          { id: 'calc-limits', entityId: 'calc-limits', name: 'Limits & Derivatives', type: 'level', questionCount: 64, difficulty: 'Hard' },
+          { id: 'calc-integration', entityId: 'calc-integration', name: 'Integration', type: 'level', questionCount: 45, difficulty: 'Hard' },
         ],
       },
     ],

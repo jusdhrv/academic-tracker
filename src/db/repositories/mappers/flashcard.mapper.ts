@@ -15,5 +15,10 @@ export function mapFlashcardToDto(flashcard: FlashcardWithRelations): FlashcardD
     concept: flashcard.concept?.name ?? 'General',
     front: flashcard.front,
     back: flashcard.back,
+    easeFactor: flashcard.easeFactor,
+    intervalDays: flashcard.intervalDays,
+    reviewCount: flashcard.reviewCount,
+    lastReviewDate: flashcard.lastReviewDate?.toISOString(),
+    nextReviewDate: flashcard.nextReviewAt?.toISOString(),
   }
 }

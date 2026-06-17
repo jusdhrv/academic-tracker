@@ -15,24 +15,19 @@ import type {
   WeakChapterStat,
 } from '@/types/analytics'
 
-const SOLVED_OUTCOMES = ['solved-fast', 'solved-slow'] as const
+const solvedOutcomes = new Set(['solved-fast', 'solved-slow'])
 
 export class StatisticsRepository {
   async getAnalyticsData(filters: AnalyticsFilters = {}) {
-    const [currentRangeAttempts, previousRangeAttempts, reviewQueueSize, overdueReviews] = await Promise.all([
+    const [currentRangeAttempts, previousRangeAttempts, flashcardsReviewed] = await Promise.all([
       this.getAttemptRecords(filters),
       this.getAttemptRecords(this.getPreviousRange(filters)),
-      prisma.flashcard.count({
-        where: {
-          OR: [{ nextReviewAt: null }, { nextReviewAt: { lte: new Date() } }],
-        },
-      }),
-      prisma.flashcard.count({
-        where: { nextReviewAt: { lte: new Date() } },
+      prisma.flashcardReview.count({
+        where: this.buildFlashcardReviewFilter(filters),
       }),
     ])
 
-    const currentStats = this.buildMetrics(currentRangeAttempts, previousRangeAttempts, reviewQueueSize, overdueReviews)
+    const currentStats = this.buildMetrics(currentRangeAttempts, previousRangeAttempts, flashcardsReviewed)
 
     return {
       metrics: currentStats,
@@ -133,18 +128,33 @@ export class StatisticsRepository {
     return where
   }
 
+  private buildFlashcardReviewFilter(filters: AnalyticsFilters = {}) {
+    const where: any = {}
+
+    if (filters.startDate || filters.endDate) {
+      where.reviewedAt = {}
+      if (filters.startDate) where.reviewedAt.gte = new Date(filters.startDate)
+      if (filters.endDate) {
+        const end = new Date(filters.endDate)
+        end.setHours(23, 59, 59, 999)
+        where.reviewedAt.lte = end
+      }
+    }
+
+    return where
+  }
+
   private buildMetrics(
     currentAttempts: Array<Awaited<ReturnType<StatisticsRepository['getAttemptRecords']>>[number]>,
     previousAttempts: Array<Awaited<ReturnType<StatisticsRepository['getAttemptRecords']>>[number]>,
-    reviewQueueSize: number,
-    overdueReviews: number,
+    flashcardsReviewed: number,
   ): StatisticsMetrics {
     const currentMinutes = currentAttempts.reduce((sum, attempt) => sum + attempt.elapsedSeconds, 0) / 60
     const previousMinutes = previousAttempts.reduce((sum, attempt) => sum + attempt.elapsedSeconds, 0) / 60
 
-    const currentSolved = currentAttempts.filter((attempt) => SOLVED_OUTCOMES.includes(attempt.outcome)).length
+    const currentSolved = currentAttempts.filter((attempt) => solvedOutcomes.has(attempt.outcome)).length
     const currentTotal = currentAttempts.filter((attempt) => attempt.outcome !== 'skipped').length
-    const previousSolved = previousAttempts.filter((attempt) => SOLVED_OUTCOMES.includes(attempt.outcome)).length
+    const previousSolved = previousAttempts.filter((attempt) => solvedOutcomes.has(attempt.outcome)).length
     const previousTotal = previousAttempts.filter((attempt) => attempt.outcome !== 'skipped').length
 
     const currentAvgSolve = this.calculateAverageSolveTime(currentAttempts)
@@ -160,8 +170,7 @@ export class StatisticsRepository {
       totalStudyTime: formatStudyDuration(Math.round(currentMinutes)),
       studyTimeDelta: this.renderDelta(currentMinutes, previousMinutes, 'm'),
       questionsAttempted: currentAttempts.length,
-      reviewQueueSize,
-      overdueReviews,
+      flashcardsReviewed,
       overallAccuracy: `${accuracy}%`,
       accuracyDelta: this.renderDelta(accuracy, previousAccuracy, '%'),
       avgSolveTime: `${Math.round(currentAvgSolve)}m`,
@@ -171,7 +180,7 @@ export class StatisticsRepository {
   }
 
   private calculateAverageSolveTime(attempts: Array<Awaited<ReturnType<StatisticsRepository['getAttemptRecords']>>[number]>) {
-    const solvedAttempts = attempts.filter((attempt) => SOLVED_OUTCOMES.includes(attempt.outcome))
+    const solvedAttempts = attempts.filter((attempt) => solvedOutcomes.has(attempt.outcome))
     if (!solvedAttempts.length) return 0
     return solvedAttempts.reduce((sum, attempt) => sum + attempt.elapsedSeconds, 0) / solvedAttempts.length / 60
   }

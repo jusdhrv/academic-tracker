@@ -25,7 +25,7 @@ export default async function Page({ searchParams }: { searchParams: Record<stri
         totalStudyTime: analyticsData.metrics.totalStudyTime,
         studyTimeDelta: analyticsData.metrics.studyTimeDelta,
         questionsAttempted: analyticsData.metrics.questionsAttempted,
-        flashcardsReviewed: analyticsData.metrics.reviewQueueSize,
+        flashcardsReviewed: analyticsData.metrics.flashcardsReviewed,
         overallAccuracy: analyticsData.metrics.overallAccuracy,
         accuracyDelta: analyticsData.metrics.accuracyDelta,
         avgSolveTime: analyticsData.metrics.avgSolveTime,

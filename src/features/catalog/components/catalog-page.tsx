@@ -42,6 +42,7 @@ import type {
   CatalogFormOptions,
   CatalogNodeDetail,
   CatalogNodeType,
+  CatalogSelectionContext,
   CatalogTreeItem,
 } from '@/types/catalog'
 

@@ -2,6 +2,8 @@ export type CatalogNodeType =
   | 'subject'
   | 'source'
   | 'chapter'
+  | 'topic'
+  | 'level'
   | 'concept'
   | 'difficulty'
   | 'question'
@@ -22,6 +24,7 @@ export interface CatalogTreeItem {
   entityId: string
   name: string
   type: CatalogNodeType
+  expanded?: boolean
   questionCount?: number
   difficulty?: CatalogDifficulty
   children?: CatalogTreeItem[]

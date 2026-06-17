@@ -126,18 +126,39 @@ model QuestionConcept {
 }
 
 model Flashcard {
-  id           Int       @id @default(autoincrement())
-  front        String
-  back         String
-  subjectId    String
-  subject      Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-  chapterId    String?
-  chapter      Chapter?  @relation(fields: [chapterId], references: [id])
-  conceptId    String?
-  concept      Concept?  @relation(fields: [conceptId], references: [id])
-  nextReviewAt DateTime?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  id              Int       @id @default(autoincrement())
+  front           String
+  back            String
+  subjectId       String
+  subject         Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  chapterId       String?
+  chapter         Chapter?  @relation(fields: [chapterId], references: [id])
+  conceptId       String?
+  concept         Concept?  @relation(fields: [conceptId], references: [id])
+  easeFactor      Float     @default(2.5)
+  intervalDays    Int       @default(0)
+  reviewCount     Int       @default(0)
+  lastReviewDate  DateTime?
+  nextReviewAt    DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  reviews         FlashcardReview[]
+}
+
+model FlashcardReview {
+  id                   String    @id @default(cuid())
+  flashcardId          Int
+  flashcard            Flashcard  @relation(fields: [flashcardId], references: [id], onDelete: Cascade)
+  response             String
+  reviewedAt           DateTime   @default(now())
+  previousIntervalDays Int
+  newIntervalDays      Int
+  previousEaseFactor   Float
+  newEaseFactor        Float
+  previousReviewDate   DateTime?
+  nextReviewDate       DateTime?
+  createdAt            DateTime   @default(now())
+  updatedAt            DateTime   @updatedAt
 }
 
 /// Seeded UI analytics snapshots (dashboard/statistics charts). JSON stored as string for SQLite.

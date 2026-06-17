@@ -26,6 +26,8 @@ const typeIcons = {
   subject: Book,
   source: FolderOpen,
   chapter: Layers,
+  topic: Layers,
+  level: FileText,
   concept: Lightbulb,
   difficulty: Lock,
   question: FileText,
@@ -94,7 +96,7 @@ export function CatalogTreeNode({
                   item.difficulty === 'Easy' && 'bg-green-900/30 text-green-300',
                   item.difficulty === 'Medium' && 'bg-yellow-900/30 text-yellow-300',
                   (item.difficulty === 'Hard' || item.difficulty === 'Very Hard') &&
-                    'bg-red-900/30 text-red-300',
+                  'bg-red-900/30 text-red-300',
                 )}
               >
                 {item.difficulty}

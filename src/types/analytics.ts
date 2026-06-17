@@ -52,8 +52,7 @@ export interface StatisticsMetrics {
   totalStudyTime: string
   studyTimeDelta: string
   questionsAttempted: number
-  reviewQueueSize: number
-  overdueReviews: number
+  flashcardsReviewed: number
   overallAccuracy: string
   accuracyDelta: string
   avgSolveTime: string

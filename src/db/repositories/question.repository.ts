@@ -10,6 +10,11 @@ import {
 import type { PracticeQuestion, QuestionForPractice } from '@/types/question'
 import type { PracticeSessionFilters } from '@/types/practice-session'
 
+type QuestionForPracticeWithStats = QuestionForPractice & {
+  failures: number
+  consecutiveFastSuccesses: number
+}
+
 const questionInclude = {
   source: true,
   difficulty: true,
@@ -36,7 +41,7 @@ export class QuestionRepository {
    * Get questions filtered by subject, source, chapter, and difficulty.
    * Optionally filter to only include questions from learned chapters.
    */
-  async getFilteredQuestions(filters: PracticeSessionFilters, _learnedChaptersOnly = false) {
+  async getFilteredQuestions(filters: PracticeSessionFilters, _learnedChaptersOnly = false): Promise<QuestionForPracticeWithStats[]> {
     const questions = await prisma.question.findMany({
       where: {
         chapters: filters.chapterIds
@@ -47,11 +52,11 @@ export class QuestionRepository {
               },
             },
           }
-          : filters.sourceId
+          : filters.sourceIds
             ? {
               some: {
                 chapter: {
-                  sourceId: filters.sourceId,
+                  sourceId: { in: filters.sourceIds },
                 },
               },
             }
@@ -140,7 +145,7 @@ export class QuestionRepository {
   /**
    * Map a question with relations to QuestionForPractice type.
    */
-  private mapToPracticeQuestion(question: QuestionWithRelations): QuestionForPractice {
+  private mapToPracticeQuestion(question: QuestionWithRelations): QuestionForPracticeWithStats {
     const primaryChapter = question.chapters[0]?.chapter
     return {
       id: question.id,
@@ -153,6 +158,8 @@ export class QuestionRepository {
       masteryScore: question.masteryScore,
       lastSeen: question.lastSeen,
       totalAttempts: question.totalAttempts,
+      failures: question.failures,
+      consecutiveFastSuccesses: question.consecutiveFastSuccesses,
     }
   }
 

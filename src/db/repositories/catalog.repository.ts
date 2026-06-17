@@ -4,6 +4,7 @@ import type {
   CatalogFormOptions,
   CatalogNodeDetail,
   CatalogQuestionSummary,
+  CatalogSelectionContext,
   CatalogTreeItem,
 } from '@/types/catalog'
 
@@ -63,7 +64,7 @@ export class CatalogRepository {
   async getNodeDetail(
     type: string,
     entityId: string,
-    context: Record<string, string | number | undefined> = {},
+    context: CatalogSelectionContext = {},
   ): Promise<CatalogNodeDetail | null> {
     switch (type) {
       case 'subject':

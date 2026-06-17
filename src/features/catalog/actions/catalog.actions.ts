@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { catalogCrudRepository } from '@/db/repositories/catalog-crud.repository'
 import { catalogRepository } from '@/db/repositories/catalog.repository'
-import type { CatalogNodeDetail } from '@/types/catalog'
+import type { CatalogNodeDetail, CatalogSelectionContext } from '@/types/catalog'
 
 function revalidate() {
   revalidatePath('/cataloging')
@@ -11,7 +11,7 @@ function revalidate() {
 
 export type ActionResult = { success: true } | { success: false; error: string }
 
-async function run(action: () => Promise<void>): Promise<ActionResult> {
+async function run(action: () => Promise<unknown>): Promise<ActionResult> {
   try {
     await action()
     revalidate()
@@ -206,7 +206,7 @@ export async function getDifficultyByNameAction(name: string) {
 export async function getCatalogNodeDetailAction(
   type: string,
   entityId: string,
-  context: Record<string, string | number | undefined> = {},
+  context: CatalogSelectionContext = {},
 ): Promise<CatalogNodeDetail | null> {
   return catalogRepository.getNodeDetail(type, entityId, context)
 }
